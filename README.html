@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><title>Inkscape extension for laser cutting with LaserGRBL</title>
+<style>
+BODY {padding:10px 20px;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-size:14px;line-height:20px}
+CODE {padding:2px 4px;font-size:90%;color:#c7254e;background-color:#f9f2f4;border-radius:4px;white-space:pre}
+A {color:#428bca;text-decoration:none}
+A:hover,A:focus {color:#2a6496;text-decoration:underline}
+H2 {font-size:30px;font-weight:500;line-height:33px;margin:20px 0 10px 0}
+OL LI {padding-bottom:5px}
+</style>
+</head>
+<body>
+
+<h1>Inkscape extension for laser cutting with LaserGRBL</h1>
+
+<p>This free extension for Inkscape speeds up preparation of laser cutting jobs if you use LaserGRBL (included free with most laser cutters).</p>
+<p>Pick your model of laser and material / thickness from pulldown lists, then export a complex job directly into LaserGRBL with one click. Use different coloured lines for each part of a job. eg, red lines to engrave in a single pass at 3000 mm/min @ 80% power, but blue lines cut in 3 passes at 300 mm/min @ 90% power.</p>
+<p>The emphasis is on it being very easy to use, with the bare minimum of settings.</p>
+<p><img src="index.png"/></p>
+<p>What this extension <u>doesn't</u> do:</p>
+<ul>
+<li>Image / photo engraving</li>
+<li>Text objects, but works if you use Inkscape's <code>Object &gt; Convert to path</code> on any text first</li>
+<li>Export for plotters, CNC machines or other G-code devices</li>
+<li>Give full control over the G-code output, with hundreds of settings</li>
+<li>Create test patterns with many different speed / power levels</li>
+</ul>
+<p>Download the latest <a href="https://inkscape.org/" target="_blank">Inkscape</a> and <a href="https://lasergrbl.com/" target="_blank">LaserGRBL</a> packages.</p>
+
+<h2>How to install</h2>
+
+<p>To manually install this extension, download and unpack the archive file. Copy the <code>export_lasergrbl</code> folder to the location listed by the Inkscape menu:</p>
+<p><code>  Edit &gt; Preferences &gt; System: User extensions</code></p>
+<p>For Windows users this will be something like:</p>
+<p><code>  %APPDATA%\inkscape\extensions</code></p>
+<p>Restart Inkscape and the new extension will be available from the menu:</p>
+<p><code>  Extensions &gt; Export &gt; Export to LaserGRBL</code></p>
+
+<h2>Using the extension</h2>
+
+<p>The extension uses different coloured lines for each part of a job, naming them: <b>Engrave</b>, <b>Inner Cut</b> &amp; <b>Outer Cut</b> colours. However these are just labels, and your job might actually use them for engraving 3 colours at different depths, or only consist of basic cutting with a single colour. In the animation below the red line &amp; text are engraved first, then the green circles are inner cuts, and finally the blue outer cut releases the finished piece. (Inner cuts are usually done <i>before</i> outer, otherwise the overall piece may move when released and any further cuts would be in the wrong place).</p>
+<p><img src="using.gif"/></p>
+<p>You can export your entire document, or make a selection of objects / groups. Then open the extension from the menu:</p>
+<p><code>  Extensions &gt; Export &gt; Export to LaserGRBL</code></p>
+<p>Firstly choose your model of laser from the pulldown, and the material you are using. This is only a shortcut, and you can leave them blank and enter your own numbers for passes / speeds / powers.</p>
+<p>Click on a coloured box to change the colour to one from your Inkscape document, or alternatively you could edit your document to use the default red / mid-green / blue. If you don't need any engraving then don't use that colour, or set it to zero passes. Other colours are not exported, so for example your document could include annotations / notes that aren't sent to the laser cutter.</p>
+<p><u>Don't</u> assume the default passes / speed / power settings are correct, as there is a lot of variation within even the same model of laser, the exact focal distance, air assist volume, between sheets of the same material and even the humidity (when cutting wood). It is <u>always</u> worth doing a small test cut first and tweaking the settings as required, before starting a long job. When trying a new material or thickness, you can generate test patterns in LaserGRBL to "dial in" the best settings for your particular set up.</p>
+<p>The total distance the laser head will move is shown, with distance per colour. A rough estimate of the time is also shown, so you can see how making more passes or using a slower cutting speed will increase the time taken.</p>
+<p>By default the new G-code file will be saved with the same filename &amp; location as your Inkscape document, but with a <code>.nc</code> extension. You can change this if wanted, before finally clicking on "<i>Export All</i>". If the button is greyed out then there is nothing set to export: check the colours are correct, there is at least one pass set, and that you are exporting all the document (or the selection you intended).</p>
+<p>LaserGRBL should automatically start with the new job open. If it doesn't then set in your operating system. eg, for Windows: right-click on any <code>.nc</code> file, <code>Open with &gt; Choose another app</code> select LaserGRBL and tick "<i>Always use this app to open .nc files</i>". You can also start LaserGRBL yourself, and load the saved G-code file.</p>
+<p>You've already set the number of laser passes for the job, so you don't need to do anything in LaserGRBL except click the <i>connect</i> icon, wait a few seconds, then click <i>play</i> to start cutting.</p>
+
+<h3>Adding new lasers/materials to the pulldowns</h3>
+
+<p>You can add (or edit) the contents of the pulldowns using LaserGRBL's <code>Grbl &gt; Material DB</code>. Scroll to the bottom of the table to add a new entry:</p>
+<p><img src="materials.png"/></p>
+<p>The extension uses a local copy of the material db file. After making any changes in LaserGRBL, you'll <u>need to copy the file</u> into the extension's own folder. On Windows this might be:</p>
+<p><code>  %APPDATA%\LaserGRBL\UserMaterials.psh</code> &rarr;<br />
+<code>  %APPDATA%\inkscape\extensions\export_lasergrbl\UserMaterials.psh</code></p>
+<p>One helpful feature is the '<i>Remarks</i>' column, which lets you record notes about using a material. eg, the focal distance for cutting that thickness with your laser, or the fumes need a certain air assist setting. These notes are shown when you choose that material in the Inkscape extension.</p>
+<p>To make the extension pulldowns shorter, you can hide laser models that you don't own by unticking the '<i>Visible</i>' column.</p>
+
+<h2>Configuration</h2>
+
+<p>The default settings can be altered by editing the <code>export_lasergrbl/export_lasergrbl.ini</code> file with any text editor. You can override the defaults when you run the extension.</p>
+<p><code>laser = Atomstack A5 PRO</code><br />
+Name of your laser cutter model, or leave blank. Should be exactly as it appears in the pulldown menu</p>
+<p><code>material = Acrylic 2.8mm</code><br />
+Name of the material you use most often, or leave blank. Should be exactly as it appears in the pulldown menu</p>
+<p><code>colors = #ff0000,#008000,#0000ff</code><br />
+Up to 3 colours that you use in your Inkscape documents for: engraved, inner cuts &amp; outer cuts. Each colour is a 6-digit hex code, "<code>#rrggbb</code>". You can see the hex code for any colour in your document by right-clicking in this extension's colour-chooser, and select '<i>Customize</i>'</p>
+<p><code>maxrate = 6000</code><br />
+Maximum speed (in mm/min) that your laser head can move at. This is <u>ONLY</u> used for estimating how long the job will take, it doesn't change the speed. For your model of laser you can copy the speed from LaserGRBL's <code>Grbl &gt; Grbl Configuration</code> and scroll down to "<i>$110 X-axis maximum rate</i>"</p>
+<p><code>darktheme = 0</code><br />
+Set to 1 if you'd like the extension window to use white text on a dark background. See Inkscape's <code>Edit &gt; Preferences</code>, "<i>Interface &gt; Theming &gt; Use dark theme</i>" checkbox</p>
+
+<h2>Future ideas</h2>
+
+<p>Any feedback, suggestions or bug reports is VERY welcome. Below are some ideas, but I'll wait for feedback before working on any of them:</p>
+<ol>
+<li>Do you need to set the origin point for your laser cutter: <i>bottom-left</i> or <i>top-left</i>? Should it be an option in the <code>.ini</code> configuration file?</li>
+<li>Should there be an option to load the models / materials database directly from LaserGRBL, instead of the user having to make a copy of the file? So it stays up to date as the user adds new material settings</li>
+<li>Are the job time estimates reasonably accurate?</li>
+<li>Should it save colours / speed / passes inside the document so next time it is opened it is ready to cut? Or at least save in memory so the user can easily tweak their settings and export again</li>
+<li>Should there be a warning message if the document contains text or image objects?</li>
+<li>Should it directly support text objects? (without needing to use <code>Object &gt; Convert to path</code> first)</li>
+<li>Should there be a warning message if the G-code save file already exists, and will be overwritten?</li>
+<li>Does it need inches/metric setting, or does everyone use mm for laser cutting? Does it work if a document is defined in px, inches, etc? (untested!)</li>
+<li>Does it work with non-RGB colours, like HSL ? What about different opacities? (untested!)</li>
+<li>Should I add an option to optimise the cutting order of the document (for shorter travel between cuts), to speed up the overall job?</li>
+</ol>
+
+<p>&nbsp;</p>
+
+<hr/>
+Nikki Smith, September 2024<br/>
+<a href='https://Climbers.net/sbc/'>https://Climbers.net</a>
+</body></html>
