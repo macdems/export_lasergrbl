@@ -157,18 +157,19 @@ def get_paths(svg, jobs):
         els_all = svg.descendants()
     for el in els_all:
         # convert shape objects to path
+        col = el.style.get_color("stroke")
+        trans = el.composed_transform()
         if el.TAG in ['rect', 'circle', 'ellipse']:
             el = el.to_path_element()
         elif el.TAG != 'path':
             continue
-        col = el.style.get_color("stroke")
-        for i, job in enumerate(jobs):
+        for job_path, job in zip(paths, jobs):
             if col == job['color']:  # Color() can compare objects
-                # break curves into line segments, max error=0.1mm
+                # break curves into line segments, max error=0.05mm
                 # (composed_transform() allows move/rotate/scale transforms)
-                path = el.path.transform(el.composed_transform()).to_superpath()
+                path = el.path.transform(trans).to_superpath()
                 inkex.bezier.cspsubdiv(path, 0.05)
-                paths[i].extend(path)
+                job_path.extend(path)
     for path in paths:
         sort_path(path, svg.viewbox_height)
     return paths
@@ -179,7 +180,7 @@ def export_gcode(svg, jobs, filename):
     # TODO what if file already exists? prompt user?
     with open(filename, 'w') as fp:
         try:
-            fp.write("( Inkscape export_lasergrbl )\nG21\nG90\nG92 Z0\n")  # mm units, absolute coords, set Z=0 at start
+            fp.write("( Inkscape export_lasergrbl )\nG21\nG90\nG53 G0 Z-1\nG54\n")
         except IOError as e:
             errorbox("Error writing to file: " + e.strerror)
             return
